@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly View — DMC Financial Portal</title>
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="topbar">
+    <a href="index.html" class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">D' Mezzanine Cafe</span>
+      <span class="brand-sub">Financial Portal</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"   class="nav-link">Dashboard</a>
+      <a href="entry.html"   class="nav-link">Daily Entry</a>
+      <a href="monthly.html" class="nav-link">Monthly View</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title">Monthly view</div>
+      <div class="page-subtitle">Full summary by month — 2026</div>
+    </div>
+
+    <!-- Monthly Summary Table -->
+    <div class="card">
+      <div class="card-title">Monthly summary</div>
+      <table class="monthly-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th class="text-right">Income</th>
+            <th class="text-right">Expenses</th>
+            <th class="text-right">Net income</th>
+            <th class="text-right">Status</th>
+          </tr>
+        </thead>
+        <tbody id="monthly-tbody">
+          <tr><td colspan="5" class="empty-state">Loading…</td></tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Total</td>
+            <td class="text-right text-green" id="foot-inc">—</td>
+            <td class="text-right text-red"   id="foot-exp">—</td>
+            <td class="text-right"            id="foot-net">—</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Charts -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Expense category breakdown</div>
+        <div class="chart-wrap" style="height: 280px">
+          <canvas id="chart-breakdown"
+                  role="img"
+                  aria-label="Expense category breakdown horizontal bar chart">
+            Total expenses by category.
+          </canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Income by channel</div>
+        <div class="chart-wrap" style="height: 280px">
+          <canvas id="chart-channels"
+                  role="img"
+                  aria-label="Income by channel doughnut chart">
+            Income split by payment channel.
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/monthly.js"></script>
+
+</body>
+</html>

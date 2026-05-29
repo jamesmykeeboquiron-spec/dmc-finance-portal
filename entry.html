@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Entry — DMC Financial Portal</title>
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="topbar">
+    <a href="index.html" class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">D' Mezzanine Cafe</span>
+      <span class="brand-sub">Financial Portal</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"   class="nav-link">Dashboard</a>
+      <a href="entry.html"   class="nav-link">Daily Entry</a>
+      <a href="monthly.html" class="nav-link">Monthly View</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title">Daily entry</div>
+      <div class="page-subtitle" id="today-label"></div>
+    </div>
+
+    <!-- Income Section -->
+    <div class="card">
+      <div class="card-title">Income by channel</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="entry-date">Date</label>
+          <input type="date" id="entry-date">
+        </div>
+        <div class="form-group">
+          <label for="inc-cash">Cash (₱)</label>
+          <input type="number" id="inc-cash" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="inc-gcash">GCash (₱)</label>
+          <input type="number" id="inc-gcash" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="inc-card">Card (₱)</label>
+          <input type="number" id="inc-card" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="inc-fp">Foodpanda (₱)</label>
+          <input type="number" id="inc-fp" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="inc-other">SD / C/O / GC (₱)</label>
+          <input type="number" id="inc-other" placeholder="0.00" min="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="total-row">
+        <span class="total-label">Grand total income</span>
+        <span class="total-val text-green" id="inc-total">₱0.00</span>
+      </div>
+    </div>
+
+    <!-- Expenses Section -->
+    <div class="card">
+      <div class="card-title">Expenses</div>
+      <div class="form-grid" style="grid-template-columns: repeat(3, minmax(0,1fr))">
+        <div class="form-group">
+          <label for="exp-sal">Salaries (₱)</label>
+          <input type="number" id="exp-sal" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="exp-pur">Purchases (₱)</label>
+          <input type="number" id="exp-pur" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="exp-rent">Rental (₱)</label>
+          <input type="number" id="exp-rent" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="exp-util">Utilities (₱)</label>
+          <input type="number" id="exp-util" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="exp-ben">Benefits — SSS / PhilHealth / Pag-IBIG (₱)</label>
+          <input type="number" id="exp-ben" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="exp-meals">Staff meals (₱)</label>
+          <input type="number" id="exp-meals" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="exp-pcf">PCF / Cash advance (₱)</label>
+          <input type="number" id="exp-pcf" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="exp-tax">Taxes &amp; license (₱)</label>
+          <input type="number" id="exp-tax" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="exp-sun">Sundries (₱)</label>
+          <input type="number" id="exp-sun" placeholder="0.00" min="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="note-row">
+        <label for="exp-note">Note / particulars</label>
+        <input type="text" id="exp-note" placeholder="e.g. FJC Raels Meatshop — supplier payment">
+      </div>
+
+      <div class="total-row">
+        <span class="total-label">Total expenses</span>
+        <span class="total-val text-red" id="exp-total">₱0.00</span>
+      </div>
+
+      <div class="total-row" style="margin-bottom: 20px">
+        <span class="total-label">Net for the day</span>
+        <span class="total-val" id="net-day">₱0.00</span>
+      </div>
+
+      <button class="btn-primary" id="btn-save">
+        <i class="ti ti-device-floppy" aria-hidden="true"></i>
+        Save entry
+      </button>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/entry.js"></script>
+
+</body>
+</html>

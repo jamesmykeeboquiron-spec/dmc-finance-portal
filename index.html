@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — DMC Financial Portal</title>
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="topbar">
+    <a href="index.html" class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">D' Mezzanine Cafe</span>
+      <span class="brand-sub">Financial Portal</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"   class="nav-link">Dashboard</a>
+      <a href="entry.html"   class="nav-link">Daily Entry</a>
+      <a href="monthly.html" class="nav-link">Monthly View</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title">Dashboard</div>
+      <div class="page-subtitle">Year-to-date overview — 2026</div>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Total income YTD</div>
+        <div class="metric-val green" id="m-income">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Total expenses YTD</div>
+        <div class="metric-val red" id="m-expense">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Net income YTD</div>
+        <div class="metric-val" id="m-net">—</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Cash balance</div>
+        <div class="metric-val amber" id="m-balance">—</div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Monthly income vs expenses</div>
+        <div class="chart-wrap">
+          <canvas id="chart-monthly"
+                  role="img"
+                  aria-label="Monthly income vs expenses bar chart">
+            Monthly income and expense comparison by month.
+          </canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Net income trend</div>
+        <div class="chart-wrap">
+          <canvas id="chart-net"
+                  role="img"
+                  aria-label="Net income trend line chart">
+            Net income trend over months.
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Entries -->
+    <div class="card">
+      <div class="card-title">Recent entries</div>
+      <div class="entry-header">
+        <span>Date</span>
+        <span>Description</span>
+        <span class="text-right">Income</span>
+        <span class="text-right">Expenses</span>
+        <span class="text-right">Net</span>
+      </div>
+      <div class="entry-list" id="recent-list">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/dashboard.js"></script>
+
+</body>
+</html>
