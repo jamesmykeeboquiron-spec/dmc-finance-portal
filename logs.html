@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Logs — DMC Financial Portal</title>
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .filter-bar {
+      background: #fff;
+      border: 1px solid #e5e4de;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .filter-group label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #888780;
+    }
+    .filter-group select,
+    .filter-group input {
+      padding: 7px 10px;
+      border: 1px solid #e5e4de;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #1a1a18;
+      font-family: inherit;
+      background: #fff;
+      min-width: 130px;
+    }
+    .filter-group select:focus,
+    .filter-group input:focus { outline: none; border-color: #D85A30; }
+    .filter-actions { display: flex; gap: 8px; align-items: flex-end; }
+    .btn-filter {
+      padding: 7px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid #e5e4de;
+      background: #fff;
+      color: #1a1a18;
+      transition: background 0.15s;
+    }
+    .btn-filter:hover { background: #f5f4f0; }
+    .btn-filter.primary { background: #D85A30; color: #fff; border-color: #D85A30; }
+    .btn-filter.primary:hover { background: #993C1D; }
+
+    .log-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .log-sum-card {
+      background: #fff;
+      border: 1px solid #e5e4de;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .log-sum-label { font-size: 11px; color: #888780; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5px; }
+    .log-sum-val   { font-size: 20px; font-weight: 600; }
+
+    .log-feed { display: flex; flex-direction: column; gap: 8px; }
+
+    .log-card {
+      background: #fff;
+      border: 1px solid #e5e4de;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: box-shadow 0.15s;
+    }
+    .log-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+    .log-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .log-card-header:hover { background: #fafaf8; }
+
+    .log-date-block { display: flex; flex-direction: column; gap: 2px; }
+    .log-date       { font-size: 14px; font-weight: 600; }
+    .log-note       { font-size: 12px; color: #888780; }
+
+    .log-amounts {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .log-amt-item { text-align: right; }
+    .log-amt-label { font-size: 11px; color: #888780; }
+    .log-amt-val   { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .log-toggle { color: #888780; font-size: 18px; margin-left: 12px; transition: transform 0.2s; }
+    .log-card.expanded .log-toggle { transform: rotate(180deg); }
+
+    .log-detail {
+      display: none;
+      padding: 0 18px 16px;
+      border-top: 1px solid #f1efe8;
+    }
+    .log-card.expanded .log-detail { display: block; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding-top: 14px;
+    }
+    .detail-section-title {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #888780;
+      margin-bottom: 8px;
+    }
+    .detail-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 5px 0;
+      border-bottom: 1px solid #f1efe8;
+    }
+    .detail-line:last-child { border-bottom: none; }
+    .detail-line .dl { color: #888780; }
+    .detail-line .dv { font-weight: 500; font-variant-numeric: tabular-nums; }
+
+    .no-results {
+      text-align: center;
+      padding: 48px 0;
+      color: #888780;
+      font-size: 14px;
+    }
+    .no-results i { font-size: 32px; display: block; margin-bottom: 8px; opacity: 0.4; }
+
+    @media (max-width: 768px) {
+      .log-summary  { grid-template-columns: repeat(2, 1fr); }
+      .log-amounts  { gap: 12px; }
+      .detail-grid  { grid-template-columns: 1fr; }
+      .filter-bar   { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar">
+    <a href="owner.html" class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">D' Mezzanine Cafe</span>
+      <span class="brand-sub">Owner View</span>
+    </a>
+    <div class="nav-links">
+      <a href="owner.html"   class="nav-link">Dashboard</a>
+      <a href="logs.html"    class="nav-link">Daily Logs</a>
+      <a href="monthly.html" class="nav-link">Monthly</a>
+      <a href="entry.html"   class="nav-link" style="background:#fff3ef;color:#D85A30;border:1px solid #f5c4b3">+ Entry</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <div class="page-header">
+      <div class="page-title">Daily logs</div>
+      <div class="page-subtitle">Review and audit all entries</div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Month</label>
+        <select id="filter-month">
+          <option value="">All months</option>
+          <option value="2026-01">January 2026</option>
+          <option value="2026-02">February 2026</option>
+          <option value="2026-03">March 2026</option>
+          <option value="2026-04">April 2026</option>
+          <option value="2026-05">May 2026</option>
+          <option value="2026-06">June 2026</option>
+          <option value="2026-07">July 2026</option>
+          <option value="2026-08">August 2026</option>
+          <option value="2026-09">September 2026</option>
+          <option value="2026-10">October 2026</option>
+          <option value="2026-11">November 2026</option>
+          <option value="2026-12">December 2026</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>From date</label>
+        <input type="date" id="filter-from">
+      </div>
+      <div class="filter-group">
+        <label>To date</label>
+        <input type="date" id="filter-to">
+      </div>
+      <div class="filter-actions">
+        <button class="btn-filter primary" onclick="applyFilter()">Apply</button>
+        <button class="btn-filter"         onclick="clearFilter()">Clear</button>
+      </div>
+    </div>
+
+    <!-- Filtered Summary -->
+    <div class="log-summary">
+      <div class="log-sum-card">
+        <div class="log-sum-label">Entries shown</div>
+        <div class="log-sum-val" id="sum-count">—</div>
+      </div>
+      <div class="log-sum-card">
+        <div class="log-sum-label">Total income</div>
+        <div class="log-sum-val text-green" id="sum-inc">—</div>
+      </div>
+      <div class="log-sum-card">
+        <div class="log-sum-label">Total expenses</div>
+        <div class="log-sum-val text-red" id="sum-exp">—</div>
+      </div>
+      <div class="log-sum-card">
+        <div class="log-sum-label">Net</div>
+        <div class="log-sum-val" id="sum-net">—</div>
+      </div>
+    </div>
+
+    <!-- Log Feed -->
+    <div class="log-feed" id="log-feed">
+      <div class="no-results"><i class="ti ti-loader"></i>Loading entries…</div>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+  (function () {
+
+    var allEntries = [];
+
+    var CHAN_LABELS = { cash:'Cash', gcash:'GCash', card:'Card', fp:'Foodpanda', other:'Other' };
+    var EXP_LABELS  = { sal:'Salaries', pur:'Purchases', rent:'Rental', util:'Utilities', ben:'Benefits', meals:'Staff Meals', pcf:'PCF', tax:'Taxes', sun:'Sundries' };
+
+    function fmt(n) { return '₱' + Math.round(n).toLocaleString('en-PH'); }
+
+    function filteredEntries() {
+      var month = document.getElementById('filter-month').value;
+      var from  = document.getElementById('filter-from').value;
+      var to    = document.getElementById('filter-to').value;
+
+      return allEntries.filter(function (e) {
+        if (month && e.date.substring(0,7) !== month) return false;
+        if (from  && e.date < from) return false;
+        if (to    && e.date > to)   return false;
+        return true;
+      }).slice().reverse(); /* most recent first */
+    }
+
+    function applyFilter() { render(filteredEntries()); }
+    function clearFilter() {
+      document.getElementById('filter-month').value = '';
+      document.getElementById('filter-from').value  = '';
+      document.getElementById('filter-to').value    = '';
+      render(filteredEntries());
+    }
+
+    function toggleCard(id) {
+      var card = document.getElementById(id);
+      if (card) card.classList.toggle('expanded');
+    }
+
+    function detailLines(map, labelMap) {
+      return Object.keys(labelMap).map(function (k) {
+        var v = map ? (map[k] || 0) : 0;
+        if (!v) return '';
+        return '<div class="detail-line"><span class="dl">' + labelMap[k] + '</span><span class="dv">' + fmt(v) + '</span></div>';
+      }).join('');
+    }
+
+    function render(entries) {
+      /* Summary bar */
+      var totI = entries.reduce(function (s,e) { return s+e.income; }, 0);
+      var totE = entries.reduce(function (s,e) { return s+e.expenses; }, 0);
+      var totN = totI - totE;
+
+      document.getElementById('sum-count').textContent = entries.length;
+      document.getElementById('sum-inc').textContent   = fmt(totI);
+      document.getElementById('sum-exp').textContent   = fmt(totE);
+      var netEl = document.getElementById('sum-net');
+      netEl.textContent = fmt(totN);
+      netEl.className   = 'log-sum-val ' + (totN >= 0 ? 'text-green' : 'text-red');
+
+      var feed = document.getElementById('log-feed');
+
+      if (!entries.length) {
+        feed.innerHTML = '<div class="no-results"><i class="ti ti-search-off"></i>No entries match your filter.</div>';
+        return;
+      }
+
+      feed.innerHTML = entries.map(function (e, i) {
+        var id    = 'log-' + i;
+        var net   = e.income - e.expenses;
+        var netCls= net >= 0 ? 'text-green' : 'text-red';
+
+        var chanHtml = e.channels ? detailLines(e.channels, CHAN_LABELS) : '<div class="detail-line"><span class="dl">Total</span><span class="dv">' + fmt(e.income) + '</span></div>';
+        var expHtml  = e.expBreak ? detailLines(e.expBreak, EXP_LABELS)  : '<div class="detail-line"><span class="dl">Total</span><span class="dv">' + fmt(e.expenses) + '</span></div>';
+
+        return [
+          '<div class="log-card" id="', id, '">',
+            '<div class="log-card-header" onclick="toggleCard(\'', id, '\')">',
+              '<div class="log-date-block">',
+                '<span class="log-date">', e.date, '</span>',
+                '<span class="log-note">', e.note, '</span>',
+              '</div>',
+              '<div style="display:flex;align-items:center">',
+                '<div class="log-amounts">',
+                  '<div class="log-amt-item">',
+                    '<div class="log-amt-label">Income</div>',
+                    '<div class="log-amt-val text-green">', fmt(e.income), '</div>',
+                  '</div>',
+                  '<div class="log-amt-item">',
+                    '<div class="log-amt-label">Expenses</div>',
+                    '<div class="log-amt-val text-red">-', fmt(e.expenses), '</div>',
+                  '</div>',
+                  '<div class="log-amt-item">',
+                    '<div class="log-amt-label">Net</div>',
+                    '<div class="log-amt-val ', netCls, '">', fmt(net), '</div>',
+                  '</div>',
+                '</div>',
+                '<i class="ti ti-chevron-down log-toggle"></i>',
+              '</div>',
+            '</div>',
+            '<div class="log-detail">',
+              '<div class="detail-grid">',
+                '<div>',
+                  '<div class="detail-section-title">Income breakdown</div>',
+                  chanHtml,
+                '</div>',
+                '<div>',
+                  '<div class="detail-section-title">Expense breakdown</div>',
+                  expHtml,
+                '</div>',
+              '</div>',
+            '</div>',
+          '</div>'
+        ].join('');
+      }).join('');
+    }
+
+    function init() {
+      DMC_UI.setActiveNav();
+      allEntries = DMC_DATA.load();
+      render(filteredEntries());
+    }
+
+    window.applyFilter = applyFilter;
+    window.clearFilter = clearFilter;
+    window.toggleCard  = toggleCard;
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+  </script>
+
+</body>
+</html>

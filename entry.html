@@ -6,138 +6,243 @@
   <title>Daily Entry — DMC Financial Portal</title>
   <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { background: #f5f4f0; }
+    .steps { display:flex;align-items:center;gap:0;margin-bottom:1.5rem; }
+    .step  { display:flex;align-items:center;gap:8px;flex:1; }
+    .step-num { width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;background:#f1efe8;color:#888780;border:1px solid #e5e4de;transition:all 0.2s; }
+    .step-label { font-size:12px;color:#888780;font-weight:500;transition:color 0.2s; }
+    .step.active .step-num  { background:#D85A30;color:#fff;border-color:#D85A30; }
+    .step.active .step-label{ color:#1a1a18; }
+    .step.done  .step-num   { background:#1D9E75;color:#fff;border-color:#1D9E75; }
+    .step-line { flex:1;height:1px;background:#e5e4de;margin:0 8px;max-width:40px; }
+    .channel-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px; }
+    .channel-field { background:#f5f4f0;border:1px solid #e5e4de;border-radius:10px;padding:12px 10px 10px;display:flex;flex-direction:column;gap:6px;transition:border-color 0.15s; }
+    .channel-field:focus-within { border-color:#D85A30;background:#fff; }
+    .channel-field label { font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:0.04em; }
+    .channel-field input { background:transparent;border:none;font-size:18px;font-weight:600;color:#1a1a18;width:100%;font-variant-numeric:tabular-nums;font-family:inherit; }
+    .channel-field input:focus { outline:none; }
+    .channel-field input::placeholder { color:#c0bdb5;font-weight:400;font-size:16px; }
+    .exp-row { display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1efe8;gap:12px; }
+    .exp-row:last-of-type { border-bottom:none; }
+    .exp-row-label { font-size:14px;color:#1a1a18;min-width:160px;display:flex;align-items:center;gap:8px; }
+    .exp-icon { width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0; }
+    .exp-row input { flex:1;text-align:right;border:1px solid #e5e4de;border-radius:8px;padding:8px 12px;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:#1a1a18;font-family:inherit;max-width:160px;background:#fff;transition:border-color 0.15s; }
+    .exp-row input:focus { outline:none;border-color:#D85A30; }
+    .exp-row input::placeholder { color:#c0bdb5;font-weight:400; }
+    .confirm-section { margin-bottom:16px; }
+    .confirm-title { font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;color:#888780;margin-bottom:10px; }
+    .confirm-line { display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid #f1efe8; }
+    .confirm-line:last-child { border-bottom:none; }
+    .confirm-line .cl { color:#888780; }
+    .confirm-line .cv { font-weight:600;font-variant-numeric:tabular-nums; }
+    .confirm-total { display:flex;justify-content:space-between;align-items:center;background:#f5f4f0;border-radius:10px;padding:14px 16px;margin-bottom:10px; }
+    .confirm-total .ct-label { font-size:14px;font-weight:500; }
+    .confirm-total .ct-val   { font-size:22px;font-weight:700;font-variant-numeric:tabular-nums; }
+    .btn-row { display:flex;gap:10px; }
+    .btn-back { flex:0 0 auto;background:#fff;color:#1a1a18;border:1px solid #e5e4de;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px; }
+    .btn-back:hover { background:#f5f4f0; }
+    .btn-confirm { flex:1;background:#1D9E75;color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s; }
+    .btn-confirm:hover { background:#157a59; }
+    .btn-next { width:100%;background:#D85A30;color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s;margin-top:16px; }
+    .btn-next:hover  { background:#993C1D; }
+    .btn-next:active { transform:scale(0.99); }
+    .screen { display:none; }
+    .screen.visible { display:block; }
+    .note-input { width:100%;padding:10px 14px;border:1px solid #e5e4de;border-radius:8px;font-size:14px;color:#1a1a18;font-family:inherit;background:#fff;margin-top:4px; }
+    .note-input:focus { outline:none;border-color:#D85A30; }
+    .success-screen { text-align:center;padding:48px 24px; }
+    .success-icon { width:72px;height:72px;background:#EAF3DE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px; }
+    .success-title { font-size:20px;font-weight:600;margin-bottom:8px; }
+    .success-sub   { font-size:14px;color:#888780;margin-bottom:24px; }
+    @media (max-width:480px) {
+      .channel-grid { grid-template-columns:repeat(2,1fr); }
+      .exp-row-label { min-width:130px;font-size:13px; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav class="topbar">
-    <a href="index.html" class="brand">
+    <a href="owner.html" class="brand">
       <div class="brand-dot"></div>
       <span class="brand-name">D' Mezzanine Cafe</span>
-      <span class="brand-sub">Financial Portal</span>
+      <span class="brand-sub">Daily Entry</span>
     </a>
     <div class="nav-links">
-      <a href="index.html"   class="nav-link">Dashboard</a>
-      <a href="entry.html"   class="nav-link">Daily Entry</a>
-      <a href="monthly.html" class="nav-link">Monthly View</a>
+      <a href="owner.html"   class="nav-link">Dashboard</a>
+      <a href="logs.html"    class="nav-link">Daily Logs</a>
+      <a href="monthly.html" class="nav-link">Monthly</a>
     </div>
   </nav>
 
-  <main class="container">
+  <main class="container" style="max-width:640px">
 
-    <!-- Page Header -->
-    <div class="page-header">
-      <div class="page-title">Daily entry</div>
-      <div class="page-subtitle" id="today-label"></div>
+    <div class="steps">
+      <div class="step active" id="step-1"><div class="step-num" id="step-num-1">1</div><div class="step-label">Income</div></div>
+      <div class="step-line"></div>
+      <div class="step" id="step-2"><div class="step-num" id="step-num-2">2</div><div class="step-label">Expenses</div></div>
+      <div class="step-line"></div>
+      <div class="step" id="step-3"><div class="step-num" id="step-num-3">3</div><div class="step-label">Confirm</div></div>
     </div>
 
-    <!-- Income Section -->
-    <div class="card">
-      <div class="card-title">Income by channel</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="entry-date">Date</label>
-          <input type="date" id="entry-date">
+    <!-- SCREEN 1: Income -->
+    <div id="screen-income" class="screen visible">
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:16px;font-weight:600;margin-bottom:3px">What came in today?</div>
+            <div style="font-size:13px;color:#888780" id="today-label"></div>
+          </div>
+          <div class="form-group" style="min-width:140px">
+            <label for="entry-date" style="font-size:11px">Date</label>
+            <input type="date" id="entry-date" style="font-size:13px;padding:6px 8px">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="inc-cash">Cash (₱)</label>
-          <input type="number" id="inc-cash" placeholder="0.00" min="0" step="0.01">
+        <div class="channel-grid">
+          <div class="channel-field"><label>💵 Cash</label><input type="number" id="inc-cash" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+          <div class="channel-field"><label>📱 GCash</label><input type="number" id="inc-gcash" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+          <div class="channel-field"><label>💳 Card</label><input type="number" id="inc-card" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+          <div class="channel-field"><label>🐼 Foodpanda</label><input type="number" id="inc-fp" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+          <div class="channel-field" style="grid-column:span 2"><label>🎫 SD / C/O / GC</label><input type="number" id="inc-other" placeholder="0" min="0" step="1" inputmode="decimal"></div>
         </div>
-        <div class="form-group">
-          <label for="inc-gcash">GCash (₱)</label>
-          <input type="number" id="inc-gcash" placeholder="0.00" min="0" step="0.01">
+        <div class="total-row">
+          <span class="total-label">Total income</span>
+          <span class="total-val text-green" id="inc-total">₱0</span>
         </div>
-        <div class="form-group">
-          <label for="inc-card">Card (₱)</label>
-          <input type="number" id="inc-card" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label for="inc-fp">Foodpanda (₱)</label>
-          <input type="number" id="inc-fp" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label for="inc-other">SD / C/O / GC (₱)</label>
-          <input type="number" id="inc-other" placeholder="0.00" min="0" step="0.01">
-        </div>
-      </div>
-
-      <div class="total-row">
-        <span class="total-label">Grand total income</span>
-        <span class="total-val text-green" id="inc-total">₱0.00</span>
+        <button class="btn-next" onclick="goToExpenses()">Next — Expenses <i class="ti ti-arrow-right"></i></button>
       </div>
     </div>
 
-    <!-- Expenses Section -->
-    <div class="card">
-      <div class="card-title">Expenses</div>
-      <div class="form-grid" style="grid-template-columns: repeat(3, minmax(0,1fr))">
-        <div class="form-group">
-          <label for="exp-sal">Salaries (₱)</label>
-          <input type="number" id="exp-sal" placeholder="0.00" min="0" step="0.01">
+    <!-- SCREEN 2: Expenses -->
+    <div id="screen-expenses" class="screen">
+      <div class="card">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px">What went out today?</div>
+        <div style="font-size:13px;color:#888780;margin-bottom:18px">Leave blank if nothing was spent on that category.</div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#EDE9FB">👥</div>Salaries</div><input type="number" id="exp-sal" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#E6F9F3">🛒</div>Purchases</div><input type="number" id="exp-pur" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#E6F1FB">🏠</div>Rental</div><input type="number" id="exp-rent" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#FEF6E4">⚡</div>Utilities</div><input type="number" id="exp-util" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#FFF0EB">🛡️</div>Benefits</div><input type="number" id="exp-ben" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#FCEBEB">🍱</div>Staff meals</div><input type="number" id="exp-meals" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#f1efe8">💸</div>PCF / Cash adv.</div><input type="number" id="exp-pcf" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#FEF6E4">📋</div>Taxes &amp; license</div><input type="number" id="exp-tax" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div class="exp-row"><div class="exp-row-label"><div class="exp-icon" style="background:#f5f4f0">📦</div>Sundries</div><input type="number" id="exp-sun" placeholder="0" min="0" step="1" inputmode="decimal"></div>
+        <div style="margin-top:16px;margin-bottom:4px">
+          <label style="font-size:12px;color:#888780;font-weight:500">Note / particulars (optional)</label>
+          <input type="text" class="note-input" id="exp-note" placeholder="e.g. FJC Raels — supplier payment">
         </div>
-        <div class="form-group">
-          <label for="exp-pur">Purchases (₱)</label>
-          <input type="number" id="exp-pur" placeholder="0.00" min="0" step="0.01">
+        <div class="total-row" style="margin-top:14px">
+          <span class="total-label">Total expenses</span>
+          <span class="total-val text-red" id="exp-total">₱0</span>
         </div>
-        <div class="form-group">
-          <label for="exp-rent">Rental (₱)</label>
-          <input type="number" id="exp-rent" placeholder="0.00" min="0" step="0.01">
+        <button class="btn-next" onclick="goToConfirm()">Review &amp; confirm <i class="ti ti-arrow-right"></i></button>
+      </div>
+      <div style="text-align:center;margin-top:10px">
+        <button onclick="goToIncome()" style="background:none;border:none;color:#888780;font-size:13px;cursor:pointer">← Back to income</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: Confirm -->
+    <div id="screen-confirm" class="screen">
+      <div class="card">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px">Review before saving</div>
+        <div style="font-size:13px;color:#888780;margin-bottom:20px" id="confirm-date-label"></div>
+        <div class="confirm-section"><div class="confirm-title">Income</div><div id="confirm-income-lines"></div></div>
+        <div class="confirm-section"><div class="confirm-title">Expenses</div><div id="confirm-expense-lines"></div></div>
+        <div class="confirm-total" id="confirm-net-block">
+          <span class="ct-label">Net for the day</span>
+          <span class="ct-val" id="confirm-net">₱0</span>
         </div>
-        <div class="form-group">
-          <label for="exp-util">Utilities (₱)</label>
-          <input type="number" id="exp-util" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label for="exp-ben">Benefits — SSS / PhilHealth / Pag-IBIG (₱)</label>
-          <input type="number" id="exp-ben" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label for="exp-meals">Staff meals (₱)</label>
-          <input type="number" id="exp-meals" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label for="exp-pcf">PCF / Cash advance (₱)</label>
-          <input type="number" id="exp-pcf" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label for="exp-tax">Taxes &amp; license (₱)</label>
-          <input type="number" id="exp-tax" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label for="exp-sun">Sundries (₱)</label>
-          <input type="number" id="exp-sun" placeholder="0.00" min="0" step="0.01">
+        <div class="btn-row">
+          <button class="btn-back" onclick="goToExpenses()"><i class="ti ti-arrow-left"></i> Edit</button>
+          <button class="btn-confirm" onclick="saveEntry()"><i class="ti ti-check"></i> Save entry</button>
         </div>
       </div>
+    </div>
 
-      <div class="note-row">
-        <label for="exp-note">Note / particulars</label>
-        <input type="text" id="exp-note" placeholder="e.g. FJC Raels Meatshop — supplier payment">
+    <!-- SCREEN 4: Success -->
+    <div id="screen-success" class="screen">
+      <div class="card success-screen">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Entry saved!</div>
+        <div class="success-sub">Today's log has been recorded successfully.</div>
+        <div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto">
+          <button class="btn-next" onclick="newEntry()" style="margin-top:0">Log another entry</button>
+          <a href="logs.html" style="text-align:center;font-size:13px;color:#888780;text-decoration:none;padding:10px">View all logs →</a>
+        </div>
       </div>
-
-      <div class="total-row">
-        <span class="total-label">Total expenses</span>
-        <span class="total-val text-red" id="exp-total">₱0.00</span>
-      </div>
-
-      <div class="total-row" style="margin-bottom: 20px">
-        <span class="total-label">Net for the day</span>
-        <span class="total-val" id="net-day">₱0.00</span>
-      </div>
-
-      <button class="btn-primary" id="btn-save">
-        <i class="ti ti-device-floppy" aria-hidden="true"></i>
-        Save entry
-      </button>
     </div>
 
   </main>
 
   <div class="toast" id="toast"></div>
 
-  <!-- Scripts -->
   <script src="js/data.js"></script>
   <script src="js/ui.js"></script>
-  <script src="js/entry.js"></script>
-
+  <script>
+  (function(){
+    var INC = ['inc-cash','inc-gcash','inc-card','inc-fp','inc-other'];
+    var EXP = ['exp-sal','exp-pur','exp-rent','exp-util','exp-ben','exp-meals','exp-pcf','exp-tax','exp-sun'];
+    var CLBL = {'inc-cash':'Cash','inc-gcash':'GCash','inc-card':'Card','inc-fp':'Foodpanda','inc-other':'SD/C/O/GC'};
+    var ELBL = {'exp-sal':'Salaries','exp-pur':'Purchases','exp-rent':'Rental','exp-util':'Utilities','exp-ben':'Benefits','exp-meals':'Staff Meals','exp-pcf':'PCF','exp-tax':'Taxes','exp-sun':'Sundries'};
+    function fmt(n){return'₱'+Math.round(n).toLocaleString('en-PH');}
+    function sum(ids){return ids.reduce(function(s,id){return s+DMC_UI.getVal(id);},0);}
+    function updateInc(){var el=document.getElementById('inc-total');if(el)el.textContent=fmt(sum(INC));}
+    function updateExp(){var el=document.getElementById('exp-total');if(el)el.textContent=fmt(sum(EXP));}
+    function showScreen(n){
+      ['income','expenses','confirm','success'].forEach(function(s){document.getElementById('screen-'+s).classList.remove('visible');});
+      document.getElementById('screen-'+n).classList.add('visible');
+      window.scrollTo(0,0);
+    }
+    function setStep(n){
+      [1,2,3].forEach(function(i){
+        var s=document.getElementById('step-'+i),sn=document.getElementById('step-num-'+i);
+        s.classList.remove('active','done');
+        if(i<n){s.classList.add('done');sn.innerHTML='&#10003;';}
+        if(i===n){s.classList.add('active');sn.textContent=i;}
+        if(i>n){sn.textContent=i;}
+      });
+    }
+    window.goToIncome   = function(){setStep(1);showScreen('income');};
+    window.goToExpenses = function(){setStep(2);showScreen('expenses');};
+    window.goToConfirm  = function(){
+      setStep(3);
+      var inc=sum(INC),exp=sum(EXP),net=inc-exp;
+      var iHtml=INC.map(function(id){var v=DMC_UI.getVal(id);if(!v)return'';return'<div class="confirm-line"><span class="cl">'+CLBL[id]+'</span><span class="cv text-green">'+fmt(v)+'</span></div>';}).join('');
+      if(!iHtml)iHtml='<div class="confirm-line"><span class="cl text-muted">No income entered</span></div>';
+      var eHtml=EXP.map(function(id){var v=DMC_UI.getVal(id);if(!v)return'';return'<div class="confirm-line"><span class="cl">'+ELBL[id]+'</span><span class="cv text-red">'+fmt(v)+'</span></div>';}).join('');
+      if(!eHtml)eHtml='<div class="confirm-line"><span class="cl text-muted">No expenses entered</span></div>';
+      document.getElementById('confirm-income-lines').innerHTML=iHtml;
+      document.getElementById('confirm-expense-lines').innerHTML=eHtml;
+      var netEl=document.getElementById('confirm-net');
+      var blk=document.getElementById('confirm-net-block');
+      if(netEl){netEl.textContent=fmt(net);netEl.className='ct-val '+(net>=0?'text-green':'text-red');}
+      if(blk)blk.style.background=net>=0?'#EAF3DE':'#FCEBEB';
+      var dl=document.getElementById('confirm-date-label');
+      if(dl)dl.textContent=document.getElementById('entry-date').value;
+      showScreen('confirm');
+    };
+    window.saveEntry=function(){
+      var date=document.getElementById('entry-date').value;
+      if(!date){alert('Please select a date.');goToIncome();return;}
+      var ok=DMC_DATA.save({date:date,income:sum(INC),expenses:sum(EXP),note:document.getElementById('exp-note').value||'Daily entry',channels:{cash:DMC_UI.getVal('inc-cash'),gcash:DMC_UI.getVal('inc-gcash'),card:DMC_UI.getVal('inc-card'),fp:DMC_UI.getVal('inc-fp'),other:DMC_UI.getVal('inc-other')},expBreak:{sal:DMC_UI.getVal('exp-sal'),pur:DMC_UI.getVal('exp-pur'),rent:DMC_UI.getVal('exp-rent'),util:DMC_UI.getVal('exp-util'),ben:DMC_UI.getVal('exp-ben'),meals:DMC_UI.getVal('exp-meals'),pcf:DMC_UI.getVal('exp-pcf'),tax:DMC_UI.getVal('exp-tax'),sun:DMC_UI.getVal('exp-sun')}});
+      if(ok)showScreen('success');
+      else alert('Could not save. Please try again.');
+    };
+    window.newEntry=function(){
+      INC.concat(EXP).forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+      var n=document.getElementById('exp-note');if(n)n.value='';
+      updateInc();updateExp();goToIncome();
+    };
+    function init(){
+      DMC_UI.setActiveNav();
+      DMC_UI.setTodayDate('entry-date','today-label');
+      INC.forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',updateInc);});
+      EXP.forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',updateExp);});
+    }
+    document.addEventListener('DOMContentLoaded',init);
+  })();
+  </script>
 </body>
 </html>

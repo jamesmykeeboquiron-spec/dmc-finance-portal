@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Dashboard — DMC Financial Portal</title>
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Owner-dashboard-specific styles ── */
+    .owner-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+    .kpi {
+      background: #fff;
+      border: 1px solid #e5e4de;
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #888780;
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .kpi-delta {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kpi-delta.up   { color: #1D9E75; }
+    .kpi-delta.down { color: #E24B4A; }
+    .kpi-delta.flat { color: #888780; }
+
+    .status-banner {
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 1rem;
+    }
+    .status-banner.profit { background: #EAF3DE; border: 1px solid #c4dfa0; }
+    .status-banner.loss   { background: #FCEBEB; border: 1px solid #f5b8b8; }
+    .status-banner.warn   { background: #FEF6E4; border: 1px solid #f5d98f; }
+    .status-icon { font-size: 32px; flex-shrink: 0; }
+    .status-title { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+    .status-sub   { font-size: 13px; color: #5F5E5A; }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .compare-card {
+      background: #fff;
+      border: 1px solid #e5e4de;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .compare-title {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #888780;
+      margin-bottom: 14px;
+    }
+    .compare-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1efe8;
+      font-size: 13px;
+    }
+    .compare-item:last-child { border-bottom: none; }
+    .compare-item .lbl { color: #888780; }
+    .compare-item .val { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .progress-bar-wrap { margin-top: 14px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #888780;
+      margin-bottom: 6px;
+    }
+    .progress-track {
+      height: 8px;
+      background: #f1efe8;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+    .progress-fill.green  { background: #1D9E75; }
+    .progress-fill.amber  { background: #BA7517; }
+    .progress-fill.red    { background: #E24B4A; }
+
+    .expense-list .exp-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid #f1efe8;
+      font-size: 13px;
+    }
+    .expense-list .exp-item:last-child { border-bottom: none; }
+    .exp-item .exp-label { color: #5F5E5A; display: flex; align-items: center; gap: 8px; }
+    .exp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .exp-item .exp-val { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .alert-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+    .alert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #FEF6E4;
+      border: 1px solid #f5d98f;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    .alert-item.danger {
+      background: #FCEBEB;
+      border-color: #f5b8b8;
+    }
+    .alert-item i { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+    .alert-item.warn   i { color: #BA7517; }
+    .alert-item.danger i { color: #E24B4A; }
+    .alert-text strong { display: block; font-weight: 600; margin-bottom: 2px; }
+
+    @media (max-width: 768px) {
+      .owner-grid   { grid-template-columns: repeat(2, 1fr); }
+      .compare-row  { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .owner-grid   { grid-template-columns: 1fr 1fr; }
+      .kpi-value    { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar">
+    <a href="owner.html" class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">D' Mezzanine Cafe</span>
+      <span class="brand-sub">Owner View</span>
+    </a>
+    <div class="nav-links">
+      <a href="owner.html"   class="nav-link">Dashboard</a>
+      <a href="logs.html"    class="nav-link">Daily Logs</a>
+      <a href="monthly.html" class="nav-link">Monthly</a>
+      <a href="entry.html"   class="nav-link" style="background:#fff3ef;color:#D85A30;border:1px solid #f5c4b3">+ Entry</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <div class="page-header" style="display:flex;align-items:flex-end;justify-content:space-between">
+      <div>
+        <div class="page-title">Good morning, Boqs 👋</div>
+        <div class="page-subtitle" id="owner-date"></div>
+      </div>
+      <div style="font-size:12px;color:#888780" id="last-updated"></div>
+    </div>
+
+    <!-- Profitability Status Banner -->
+    <div id="status-banner" class="status-banner profit">
+      <div class="status-icon" id="status-icon">📈</div>
+      <div>
+        <div class="status-title" id="status-title">Loading…</div>
+        <div class="status-sub"  id="status-sub"></div>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alert-row" id="alert-row"></div>
+
+    <!-- KPI Row: Today vs Yesterday -->
+    <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;color:#888780;margin-bottom:8px">Today vs yesterday</div>
+    <div class="owner-grid" style="margin-bottom:1.5rem">
+      <div class="kpi">
+        <div class="kpi-label">Today's income</div>
+        <div class="kpi-value text-green" id="kpi-today-inc">—</div>
+        <div class="kpi-delta" id="kpi-today-inc-delta"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Today's expenses</div>
+        <div class="kpi-value text-red" id="kpi-today-exp">—</div>
+        <div class="kpi-delta" id="kpi-today-exp-delta"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Today's net</div>
+        <div class="kpi-value" id="kpi-today-net">—</div>
+        <div class="kpi-delta" id="kpi-today-net-delta"></div>
+      </div>
+    </div>
+
+    <!-- KPI Row: MTD vs Last Month -->
+    <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;color:#888780;margin-bottom:8px">Month-to-date vs last month</div>
+    <div class="owner-grid" style="margin-bottom:1.5rem">
+      <div class="kpi">
+        <div class="kpi-label">MTD income</div>
+        <div class="kpi-value text-green" id="kpi-mtd-inc">—</div>
+        <div class="kpi-delta" id="kpi-mtd-inc-delta"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">MTD expenses</div>
+        <div class="kpi-value text-red" id="kpi-mtd-exp">—</div>
+        <div class="kpi-delta" id="kpi-mtd-exp-delta"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">MTD net</div>
+        <div class="kpi-value" id="kpi-mtd-net">—</div>
+        <div class="kpi-delta" id="kpi-mtd-net-delta"></div>
+      </div>
+    </div>
+
+    <!-- Month Progress + Expense Breakdown -->
+    <div class="compare-row">
+
+      <div class="compare-card">
+        <div class="compare-title">This month at a glance</div>
+        <div class="compare-item">
+          <span class="lbl">Income</span>
+          <span class="val text-green" id="gl-inc">—</span>
+        </div>
+        <div class="compare-item">
+          <span class="lbl">Expenses</span>
+          <span class="val text-red" id="gl-exp">—</span>
+        </div>
+        <div class="compare-item">
+          <span class="lbl">Net</span>
+          <span class="val" id="gl-net">—</span>
+        </div>
+        <div class="compare-item">
+          <span class="lbl">Expense ratio</span>
+          <span class="val" id="gl-ratio">—</span>
+        </div>
+
+        <div class="progress-bar-wrap">
+          <div class="progress-label">
+            <span>Expenses as % of income</span>
+            <span id="gl-ratio-pct">—</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="gl-bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare-card">
+        <div class="compare-title">Expense breakdown — this month</div>
+        <div class="expense-list" id="exp-breakdown-list"></div>
+      </div>
+
+    </div>
+
+    <!-- Month vs Month chart -->
+    <div class="card">
+      <div class="card-title">Income vs expenses — all months</div>
+      <div class="chart-wrap">
+        <canvas id="chart-overview" role="img" aria-label="Monthly income vs expenses overview chart">Monthly income and expenses overview.</canvas>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+  (function () {
+
+    var EXP_COLORS = {
+      sal:'#7F77DD',pur:'#5DCAA5',rent:'#378ADD',util:'#EF9F27',
+      ben:'#D85A30',meals:'#E24B4A',pcf:'#888780',tax:'#BA7517',sun:'#c0bdb5'
+    };
+    var EXP_LABELS = {
+      sal:'Salaries',pur:'Purchases',rent:'Rental',util:'Utilities',
+      ben:'Benefits',meals:'Staff Meals',pcf:'PCF',tax:'Taxes',sun:'Sundries'
+    };
+
+    function fmt(n)  { return '₱' + Math.round(n).toLocaleString('en-PH'); }
+    function pct(a,b){ return b ? Math.round((a/b)*100) : 0; }
+
+    function delta(current, previous, invertColor) {
+      if (!previous) return { html: '', cls: 'flat' };
+      var diff   = current - previous;
+      var diffPct= Math.round(Math.abs(diff / previous) * 100);
+      var up     = diff >= 0;
+      var icon   = up ? '&#8593;' : '&#8595;';
+      var cls    = up ? (invertColor ? 'down' : 'up') : (invertColor ? 'up' : 'down');
+      return {
+        html: icon + ' ' + diffPct + '% vs previous period (' + fmt(previous) + ')',
+        cls:  cls
+      };
+    }
+
+    function setText(id, val) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = val;
+    }
+
+    function setDelta(id, d) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML   = d.html;
+      el.className   = 'kpi-delta ' + d.cls;
+    }
+
+    function todayKey() {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    function yesterdayKey() {
+      var d = new Date();
+      d.setDate(d.getDate() - 1);
+      return d.toISOString().split('T')[0];
+    }
+
+    function currentMonthKey() {
+      var d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    }
+
+    function prevMonthKey() {
+      var d = new Date();
+      d.setMonth(d.getMonth() - 1);
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    }
+
+    function sumEntries(entries) {
+      return entries.reduce(function (a, e) {
+        a.income   += e.income;
+        a.expenses += e.expenses;
+        if (e.expBreak) Object.keys(e.expBreak).forEach(function (k) { a.expBreak[k] = (a.expBreak[k]||0) + e.expBreak[k]; });
+        return a;
+      }, { income:0, expenses:0, expBreak:{sal:0,pur:0,rent:0,util:0,ben:0,meals:0,pcf:0,tax:0,sun:0} });
+    }
+
+    function init() {
+      DMC_UI.setActiveNav();
+
+      var now = new Date();
+      document.getElementById('owner-date').textContent =
+        now.toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+      document.getElementById('last-updated').textContent = 'Last updated ' + now.toLocaleTimeString('en-PH', { hour:'2-digit', minute:'2-digit' });
+
+      var entries = DMC_DATA.load();
+
+      // --- Slice by period ---
+      var todayEntries = entries.filter(function (e) { return e.date === todayKey(); });
+      var yestEntries  = entries.filter(function (e) { return e.date === yesterdayKey(); });
+      var curMKey      = currentMonthKey();
+      var prevMKey     = prevMonthKey();
+      var mtdEntries   = entries.filter(function (e) { return e.date.substring(0,7) === curMKey; });
+      var prevMEntries = entries.filter(function (e) { return e.date.substring(0,7) === prevMKey; });
+
+      var today  = sumEntries(todayEntries);
+      var yest   = sumEntries(yestEntries);
+      var mtd    = sumEntries(mtdEntries);
+      var prevM  = sumEntries(prevMEntries);
+
+      // --- Today vs Yesterday ---
+      setText('kpi-today-inc', fmt(today.income));
+      setText('kpi-today-exp', fmt(today.expenses));
+      var todayNet = today.income - today.expenses;
+      var el = document.getElementById('kpi-today-net');
+      if (el) { el.textContent = fmt(todayNet); el.className = 'kpi-value ' + (todayNet >= 0 ? 'text-green' : 'text-red'); }
+      setDelta('kpi-today-inc-delta', delta(today.income,   yest.income,   false));
+      setDelta('kpi-today-exp-delta', delta(today.expenses, yest.expenses, true));
+      setDelta('kpi-today-net-delta', delta(todayNet, yest.income - yest.expenses, false));
+
+      // --- MTD vs Last Month ---
+      setText('kpi-mtd-inc', fmt(mtd.income));
+      setText('kpi-mtd-exp', fmt(mtd.expenses));
+      var mtdNet  = mtd.income - mtd.expenses;
+      var prevNet = prevM.income - prevM.expenses;
+      var netEl   = document.getElementById('kpi-mtd-net');
+      if (netEl) { netEl.textContent = fmt(mtdNet); netEl.className = 'kpi-value ' + (mtdNet >= 0 ? 'text-green' : 'text-red'); }
+      setDelta('kpi-mtd-inc-delta', delta(mtd.income,   prevM.income,   false));
+      setDelta('kpi-mtd-exp-delta', delta(mtd.expenses, prevM.expenses, true));
+      setDelta('kpi-mtd-net-delta', delta(mtdNet, prevNet, false));
+
+      // --- At a glance ---
+      var ratio = mtd.income > 0 ? pct(mtd.expenses, mtd.income) : 0;
+      setText('gl-inc',      fmt(mtd.income));
+      setText('gl-exp',      fmt(mtd.expenses));
+      setText('gl-net',      fmt(mtdNet));
+      setText('gl-ratio',    ratio + '%');
+      setText('gl-ratio-pct', ratio + '%');
+      var bar = document.getElementById('gl-bar');
+      if (bar) {
+        bar.style.width = Math.min(ratio, 100) + '%';
+        bar.className   = 'progress-fill ' + (ratio < 80 ? 'green' : ratio < 100 ? 'amber' : 'red');
+      }
+
+      // --- Expense breakdown list ---
+      var bList = document.getElementById('exp-breakdown-list');
+      if (bList) {
+        var total = mtd.expenses || 1;
+        var keys  = ['sal','pur','rent','util','ben','meals','pcf','tax','sun'];
+        bList.innerHTML = keys.map(function (k) {
+          var v = mtd.expBreak[k] || 0;
+          if (!v) return '';
+          return [
+            '<div class="exp-item">',
+              '<span class="exp-label">',
+                '<span class="exp-dot" style="background:', EXP_COLORS[k], '"></span>',
+                EXP_LABELS[k],
+              '</span>',
+              '<span class="exp-val">', fmt(v), '</span>',
+            '</div>'
+          ].join('');
+        }).join('');
+      }
+
+      // --- Status banner ---
+      var banner = document.getElementById('status-banner');
+      var icon   = document.getElementById('status-icon');
+      var title  = document.getElementById('status-title');
+      var sub    = document.getElementById('status-sub');
+      if (mtdNet > 0) {
+        banner.className = 'status-banner profit';
+        icon.textContent = '📈';
+        title.textContent = 'Profitable this month — ' + DMC_UI.MONTHS[now.getMonth()];
+        sub.textContent   = 'Net income is ' + fmt(mtdNet) + ' (' + pct(mtdNet, mtd.income) + '% margin)';
+      } else if (mtdNet < 0) {
+        banner.className = 'status-banner loss';
+        icon.textContent = '📉';
+        title.textContent = 'Running at a loss — ' + DMC_UI.MONTHS[now.getMonth()];
+        sub.textContent   = 'You are down ' + fmt(Math.abs(mtdNet)) + ' this month. Expenses exceed income.';
+      } else {
+        banner.className = 'status-banner warn';
+        icon.textContent = '⚠️';
+        title.textContent = 'No data for this month yet';
+        sub.textContent   = 'Have your manager log today\'s entry to see live numbers.';
+      }
+
+      // --- Alerts ---
+      var alerts = [];
+      if (ratio > 100)  alerts.push({ cls:'danger', icon:'ti-alert-circle', title:'Expenses exceed income this month', body:'Your expense ratio is ' + ratio + '%. Review your cost breakdown.' });
+      if (ratio > 85 && ratio <= 100) alerts.push({ cls:'warn', icon:'ti-alert-triangle', title:'High expense ratio', body:'Expenses are at ' + ratio + '% of income. Watch your spending.' });
+      if (!todayEntries.length) alerts.push({ cls:'warn', icon:'ti-clock', title:'No entry logged today', body:'Remind your manager to submit today\'s daily log.' });
+      var alertRow = document.getElementById('alert-row');
+      if (alertRow) {
+        alertRow.innerHTML = alerts.map(function (a) {
+          return '<div class="alert-item ' + a.cls + '"><i class="ti ' + a.icon + '"></i><div class="alert-text"><strong>' + a.title + '</strong>' + a.body + '</div></div>';
+        }).join('');
+      }
+
+      // --- Overview chart ---
+      DMC_CHARTS.renderMonthlyBar('chart-overview', DMC_DATA.byMonth(entries));
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+  </script>
+
+</body>
+</html>
